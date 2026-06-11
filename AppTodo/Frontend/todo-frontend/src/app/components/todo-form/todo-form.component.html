@@ -1,0 +1,81 @@
+<div class="form-wrapper">
+  <button class="new-btn" type="button" (click)="toggleForm()">
+    @if (showForm()) {
+      Chiudi form
+    } @else {
+      @if(todoToEdit()){
+        Modifica Todo
+      } @else {
+        + Nuovo Todo
+      }
+
+    }
+  </button>
+
+  @if (showForm()) {
+    <form class="todo-form" [formGroup]="todoForm" (ngSubmit)="onSubmit()">
+      <h2>
+        @if (todoToEdit()) {
+          Modifica Todo
+        } @else {
+          Nuovo Todo
+        }
+      </h2>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Titolo</label>
+          <input type="text" formControlName="titolo" placeholder="Es. Studiare Angular">
+
+          @if (todoForm.get('titolo')?.touched && todoForm.get('titolo')?.hasError('required')) {
+            <small>Titolo obbligatorio</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Descrizione</label>
+          <input type="text" formControlName="descrizione" placeholder="Es. Dettagli del todo">
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status">
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Priorità</label>
+          <select formControlName="priority">
+            @for (priority of priorities; track priority) {
+              <option [value]="priority">{{ priority }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Data scadenza</label>
+          <input type="datetime-local" formControlName="dataScadenza">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="submit-btn" type="submit">
+          @if (todoToEdit()) {
+            Aggiorna Todo
+          } @else {
+            Salva Todo
+          }
+        </button>
+
+        @if (todoToEdit()) {
+          <button class="cancel-btn" type="button" (click)="cancelEdit()">
+            Annulla modifica
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>

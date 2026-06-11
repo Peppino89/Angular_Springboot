@@ -1,0 +1,143 @@
+<div class="todo-page">
+  <header class="topbar">
+    <div>
+      <h1>Todo Dashboard</h1>
+
+      @if (authStore.user()) {
+        <p>Ciao, {{ authStore.user()?.username }}</p>
+      }
+    </div>
+
+    <button class="logout-btn" type="button" (click)="logout()">
+      Logout
+    </button>
+  </header>
+
+  <app-todo-form
+  [todoToEdit]="editingTodo()"
+  (formClosed)="clearEditing()"
+  />
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span>Totali</span>
+      <strong>{{ todoStore.totalTodos() }}</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Completati</span>
+      <strong>{{ todoStore.completedTodos() }}</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Da fare</span>
+      <strong>{{ todoStore.pendingTodos() }}</strong>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <div class="search-box">
+      <label>Cerca</label>
+      <input
+        type="text"
+        placeholder="Cerca per titolo o descrizione..."
+        [value]="todoStore.searchTerm()"
+        (input)="onSearch($event)">
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label>Status</label>
+        <select [value]="todoStore.selectedStatus()" (change)="onStatusChange($event)">
+          @for (status of statutes; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Priorità</label>
+        <select [value]="todoStore.selectedPriority()" (change)="onPriorityChange($event)">
+          @for (priority of priorities; track priority) {
+            <option [value]="priority">{{ priority }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Ordina per</label>
+        <select [value]="todoStore.sortField()" (change)="onSortFieldChange($event)">
+          <option value="dataCreazione">Data creazione</option>
+          <option value="titolo">Titolo</option>
+          <option value="descrizione">Descrizione</option>
+          <option value="priority">Priorità</option>
+          <option value="status">Status</option>
+        </select>
+      </div>
+
+      <button class="secondary-btn" type="button" (click)="todoStore.toggleSortDirection()">
+        {{ todoStore.sortDirection() === 'asc' ? 'Ascendente' : 'Discendente' }}
+      </button>
+
+      <button class="secondary-btn" type="button" (click)="todoStore.resetFilters()">
+        Reset
+      </button>
+    </div>
+  </section>
+
+  @if (todoStore.loading()) {
+    <p class="info-message">Caricamento...</p>
+  }
+
+  @if (todoStore.errorMessage()) {
+    <p class="error-message">{{ todoStore.errorMessage() }}</p>
+  }
+
+  <section class="todo-list">
+    @if (todoStore.filteredAndSortedTodos().length === 0 && !todoStore.loading()) {
+      <div class="empty-state">
+        <h2>Nessun todo trovato</h2>
+        <p>Crea un nuovo todo o modifica i filtri.</p>
+      </div>
+    }
+
+    @for (todo of todoStore.filteredAndSortedTodos(); track todo.id) {
+      <article class="todo-card">
+        <div class="todo-main">
+          <div>
+            <h3>{{ todo.titolo }}</h3>
+
+            @if (todo.descrizione) {
+              <p>{{ todo.descrizione }}</p>
+            }
+          </div>
+
+          <div class="badges">
+            <span class="badge status">{{ todo.status }}</span>
+            <span class="badge priority">{{ todo.priority }}</span>
+          </div>
+        </div>
+
+        <div class="todo-meta">
+          @if (todo.dataScadenza) {
+            <span>Scadenza: {{ todo.dataScadenza | date:'dd/MM/yyyy HH:mm' }}</span>
+          }
+
+          @if (todo.dataCreazione) {
+            <span>Creato: {{ todo.dataCreazione | date:'dd/MM/yyyy HH:mm' }}</span>
+          }
+        </div>
+
+        <div class="todo-actions">
+          <button type="button" class="edit-btn" (click)="startEdit(todo)">
+            Modifica
+          </button>
+
+          <button type="button" class="delete-btn" (click)="deleteTodo(todo.id)">
+            Elimina
+          </button>
+        </div>
+      </article>
+    }
+  </section>
+</div>

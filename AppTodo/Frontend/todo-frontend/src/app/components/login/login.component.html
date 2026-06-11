@@ -1,0 +1,80 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Accedi</h2>
+    <p class="subtitle">Bentornato nella tua Todo App</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-group">
+        <label>Username</label>
+        <input
+          type="text"
+          formControlName="username"
+          placeholder="Inserisci username">
+
+        @if (loginForm.get('username')?.touched &&
+        loginForm.get('username')?.invalid) {
+          <small>Username obbligatorio</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+
+        <div class="password-wrapper">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Inserisci password">
+
+          <button
+            type="button"
+            class="toggle-btn"
+            (click)="togglePassword()">
+
+            {{ showPassword() ? 'Nascondi' : 'Mostra' }}
+
+          </button>
+        </div>
+
+        @if (loginForm.get('password')?.touched &&
+        loginForm.get('password')?.invalid) {
+          <small>Password obbligatoria</small>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p class="error-message">
+          {{ errorMessage() }}
+        </p>
+      }
+
+      <!-- PASSWORD DIMENTICATA -->
+      <p class="forgot-link">
+        <a routerLink="/forgot-password">
+          Password dimenticata?
+        </a>
+      </p>
+
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="loading()">
+
+        @if (loading()) {
+          Accesso in corso...
+        } @else {
+          Accedi
+        }
+
+      </button>
+
+    </form>
+
+    <p class="redirect-text">
+      Non hai un account?
+      <a routerLink="/register">Registrati</a>
+    </p>
+
+  </div>
+</div>
