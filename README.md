@@ -9,7 +9,7 @@
 | Information | Details |
 |-------------|---------|
 | **Backend** | Java 21, Spring Boot |
-| **Frontend** | Angular |
+| **Frontend** | Angular 19|
 | **Languages** | Java, TypeScript |
 | **Architecture** | REST APIs + Single Page Applications |
 | **Database** | MySQL |
