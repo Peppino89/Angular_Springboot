@@ -266,6 +266,7 @@ Open:
 src/main/resources/application.properties
 ```
 
+
 Configure:
 
 ```properties
@@ -276,12 +277,36 @@ spring.datasource.password=<your_database_password>
 jwt.secret=<your_jwt_secret_key>
 jwt.expiration=86400000
 
+```
+## Configurazione Mailtrap
+
+La funzionalità **"Password dimenticata"** utilizza Mailtrap per l'invio delle email di recupero password.
+
+### Passaggi
+
+1. Registrarsi gratuitamente su https://mailtrap.io/
+2. Accedere alla dashboard.
+3. Aprire la sezione **Sandboxes**.
+4. Creare una nuova Sandbox oppure utilizzare quella predefinita.
+5. Selezionare la scheda **SMTP**.
+6. Copiare i seguenti valori:
+   - Host
+   - Port
+   - Username
+   - Password
+
+7. Inserire le credenziali nel file `application.properties`:
+
+```properties
 spring.mail.host=sandbox.smtp.mailtrap.io
 spring.mail.port=2525
-spring.mail.username=<your_mailtrap_username>
-spring.mail.password=<your_mailtrap_password>
+spring.mail.username=YOUR_MAIL_USERNAME
+spring.mail.password=YOUR_MAIL_PASSWORD
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
+---
 ---
 
 ## 🚀 Getting Started
