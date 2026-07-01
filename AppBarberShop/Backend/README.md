@@ -307,6 +307,7 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
 Once configured, the application will be able to send password recovery emails through Mailtrap.
+> **Note:** Mailtrap is intended for development and testing purposes only. For production environments, configure a real SMTP provider such as Gmail, Outlook, Amazon SES, SendGrid, or another email service.
 ```
 ---
 
