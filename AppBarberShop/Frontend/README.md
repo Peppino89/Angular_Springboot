@@ -22,7 +22,7 @@ Although the frontend is still under development, the project structure and core
 
 | Information | Details |
 |-------------|---------|
-| **Framework** | Angular |
+| **Framework** | Angular 21 |
 | **Language** | TypeScript |
 | **Architecture** | Standalone Components |
 | **Communication** | REST APIs |
