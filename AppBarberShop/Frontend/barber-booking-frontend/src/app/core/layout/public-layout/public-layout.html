@@ -1,0 +1,101 @@
+<div class="public-layout">
+
+  <header class="public-header">
+    <div class="container public-header__content">
+
+      <a routerLink="/" class="brand" (click)="closeMenu()">
+        <span class="brand__mark">
+          <i class="bx bx-cut"></i>
+        </span>
+        <span class="brand__text">BarberBooking</span>
+      </a>
+
+      <nav class="public-nav" aria-label="Navigazione principale">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="bx bx-home-alt-2"></i>
+          <span>Home</span>
+        </a>
+
+        <a routerLink="/services" routerLinkActive="active">
+          <i class="bx bx-cut"></i>
+          <span>Servizi</span>
+        </a>
+
+        <a routerLink="/bookings" routerLinkActive="active">
+          <i class="bx bx-calendar"></i>
+          <span>Prenotazioni</span>
+        </a>
+      </nav>
+
+      <div class="public-actions">
+        <a routerLink="/auth/login" class="btn btn-outline">
+          <i class="bx bx-log-in"></i>
+          <span>Accedi</span>
+        </a>
+
+        <a routerLink="/auth/register" class="btn btn-primary">
+          <i class="bx bx-calendar-plus"></i>
+          <span>Prenota</span>
+        </a>
+      </div>
+
+      <button
+        class="menu-toggle"
+        type="button"
+        (click)="toggleMenu()"
+        [class.open]="menuOpen()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Apri o chiudi menu"
+      >
+        <i class="bx" [class.bx-menu]="!menuOpen()" [class.bx-x]="menuOpen()"></i>
+      </button>
+
+    </div>
+  </header>
+
+  <nav class="mobile-menu" [class.open]="menuOpen()" aria-label="Menu mobile">
+    <a routerLink="/" (click)="closeMenu()">
+      <i class="bx bx-home-alt-2"></i>
+      <span>Home</span>
+    </a>
+
+    <a routerLink="/services" (click)="closeMenu()">
+      <i class="bx bx-cut"></i>
+      <span>Servizi</span>
+    </a>
+
+    <a routerLink="/bookings" (click)="closeMenu()">
+      <i class="bx bx-calendar"></i>
+      <span>Prenotazioni</span>
+    </a>
+
+    <a routerLink="/auth/login" (click)="closeMenu()">
+      <i class="bx bx-log-in"></i>
+      <span>Accedi</span>
+    </a>
+
+    <a routerLink="/auth/register" class="mobile-menu__cta" (click)="closeMenu()">
+      <i class="bx bx-calendar-plus"></i>
+      <span>Prenota ora</span>
+    </a>
+  </nav>
+
+  <main class="public-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="public-footer">
+    <div class="container public-footer__content">
+      <p>
+        <i class="bx bx-copyright"></i>
+        <span>2026 BarberBooking</span>
+      </p>
+
+      <p>
+        <i class="bx bx-heart"></i>
+        <span>Made with Angular & Spring Boot</span>
+      </p>
+    </div>
+  </footer>
+
+</div>

@@ -1,1 +1,106 @@
-<p>home works!</p>
+<section class="hero">
+
+  <div class="container hero__container">
+
+    <div class="hero__content fade-up">
+
+      <span class="hero__eyebrow">
+        Classic cuts. Modern experience.
+      </span>
+
+      <h1 class="hero__title">
+        <span>Il tuo stile,</span>
+        <span> la nostra passione.</span>
+      </h1>
+
+      <p class="hero__description">
+        Prenota il tuo appuntamento online in pochi click,
+        scegli il servizio più adatto a te e vivi un'esperienza
+        Barber premium senza attese.
+      </p>
+
+      <div class="hero__actions">
+
+        <a routerLink="/auth/register" class="btn btn-primary">
+          <i class="bx bx-calendar-plus"></i>
+          <span>Prenota ora</span>
+        </a>
+
+        <a routerLink="/services" class="btn btn-outline">
+          <i class="bx bx-cut"></i>
+          <span>Scopri i servizi</span>
+        </a>
+
+      </div>
+      <div class="hero__stats">
+
+        @for (stat of heroStats; track stat.label) {
+
+          <div class="hero__stat">
+
+            <span class="hero__stat-icon">
+              <i [class]="stat.icon"></i>
+            </span>
+
+            <div>
+              <strong>{{ stat.value }}</strong>
+              <small>{{ stat.label }}</small>
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+
+    </div>
+
+    <div class="hero__image-wrapper fade-in">
+
+      <div class="hero__image-card">
+
+        <img
+          src="/images/home/hero-barber.jpeg"
+          alt="Barbiere professionale durante un taglio in un salone elegante"
+        >
+        <div class="hero__image-overlay"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="line-divisor"></div>
+<section class="how-it-works section">
+
+  <div class="container">
+    <div class="section-title how-it-works__header">
+       <span>Come funziona</span>
+      <h2>Prenotare  il tuo taglio non è mai stato così semplice.</h2>
+      <p>
+         BarberBooking rende l'esperienza più veloce, ordinata e moderna:
+         scegli si il servizio, prenota online e arriva già pronto per il tuo appuntamento.
+      </p>
+    </div>
+
+    <div class="how-it-works__grid">
+
+      @for(step of howItWorksSteps; track step.title; let index=$index){
+
+        <article class="how-step fade-up">
+          <div class="how-step__number">
+           0{{ index + 1 }}
+          </div>
+         <div class="how-step__icon">
+           <i [class]="step.icon"></i>
+         </div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </article>
+
+      }
+
+    </div>
+
+  </div>
+
+</section>
