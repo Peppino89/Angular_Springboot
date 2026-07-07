@@ -21,6 +21,11 @@
           <span>Servizi</span>
         </a>
 
+        <a routerLink="/about" routerLinkActive="active">
+          <i class="bx bx-store-alt"></i>
+          <span>Chi siamo</span>
+        </a>
+
         <a routerLink="/bookings" routerLinkActive="active">
           <i class="bx bx-calendar"></i>
           <span>Prenotazioni</span>
@@ -63,7 +68,10 @@
       <i class="bx bx-cut"></i>
       <span>Servizi</span>
     </a>
-
+    <a routerLink="/about" (click)="closeMenu()">
+      <i class="bx bx-store-alt"></i>
+      <span>Chi siamo</span>
+    </a>
     <a routerLink="/bookings" (click)="closeMenu()">
       <i class="bx bx-calendar"></i>
       <span>Prenotazioni</span>
