@@ -459,6 +459,92 @@
   margin-top: var(--space-2xl);
 }
 
+.home-cta {
+  position: relative;
+  background: var(--color-bg);
+}
+
+.home-cta__box {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.3fr auto;
+  align-items: center;
+  gap: var(--space-2xl);
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at top right, rgba(255, 154, 0, 0.22), transparent 34%),
+    linear-gradient(135deg, #2C2C2C, #1E1E1E);
+  box-shadow: var(--shadow-lg);
+}
+
+.home-cta__box::before {
+  content: '';
+  position: absolute;
+  left: -5rem;
+  bottom: -5rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background: rgba(138, 95, 65, 0.28);
+  filter: blur(4px);
+}
+
+.home-cta__box::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--radius-xl) - 1px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.home-cta__content,
+.home-cta__actions {
+  position: relative;
+  z-index: 1;
+}
+
+.home-cta__eyebrow {
+  display: inline-flex;
+  margin-bottom: var(--space-md);
+  color: var(--color-accent);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+}
+
+.home-cta h2 {
+  max-width: 760px;
+  margin-bottom: var(--space-md);
+  color: #fff;
+}
+
+.home-cta p {
+  max-width: 680px;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 500;
+  line-height: 1.75;
+}
+
+.home-cta__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.home-cta__outline {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.home-cta__outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
 
 
 /* Tablet */
@@ -466,6 +552,8 @@
   .hero__container {
     grid-template-columns: 1fr;
   }
+
+
 
   .hero__content {
     max-width: 760px;
@@ -484,7 +572,21 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+@media (max-width: 900px) {
+  .home-cta__box {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
 
+  .home-cta p,
+  .home-cta h2 {
+    margin-inline: auto;
+  }
+
+  .home-cta__actions {
+    justify-content: center;
+  }
+}
 
 @media (max-width: 768px) {
   .hero {
@@ -584,5 +686,14 @@
 
   .hero__image-card img {
     object-position: 62% center;
+  }
+
+  .home-cta__box {
+    padding: 2rem 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .home-cta__eyebrow {
+    font-size: 0.68rem;
   }
 }
