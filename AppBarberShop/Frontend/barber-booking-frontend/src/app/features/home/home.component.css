@@ -102,13 +102,6 @@
   gap: var(--space-lg);
 }
 
-.hero__title {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.25rem;
-  line-height: 0.98;
-}
-
 .hero__stat {
   display: flex;
   align-items: flex-start;
