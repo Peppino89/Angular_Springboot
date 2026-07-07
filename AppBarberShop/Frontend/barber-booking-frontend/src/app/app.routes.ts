@@ -19,6 +19,11 @@ export const routes: Routes = [
           import('./features/services/services.routes').then((r) => r.SERVICES_ROUTES),
       },
       {
+        path: 'about',
+        loadComponent: () =>
+          import('./features/about/about.component').then((m) => m.AboutComponent),
+      },
+      {
         path: 'not-found',
         loadComponent: () =>
           import('./features/not-found/not-found.component').then((m) => m.NotFoundComponent),

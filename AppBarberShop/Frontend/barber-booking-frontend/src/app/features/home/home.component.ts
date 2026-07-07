@@ -8,9 +8,17 @@ type HeroStat = {
 };
 
 type HowItWorksStep = {
-  icon: string,
-  title: string,
-  description: string
+  icon: string;
+  title: string;
+  description: string;
+}
+
+type FeaturedService = {
+  icon:string;
+  name: string;
+  description: string;
+  duration:string;
+  price:string;
 }
 
 @Component({
@@ -60,4 +68,29 @@ export class HomeComponent {
       description: 'Arriva in salone e vivi un esperienza barber premium.',
     },
   ];
+  readonly featuredServices: FeaturedService[] = [
+    {
+      icon: 'bx bx-cut',
+      name: 'Taglio Uomo',
+      description: 'Taglio moderno o classico, studiato in base al tuo stile e alla forma del viso.',
+      duration: '30 min',
+      price: '€18'
+    },
+    {
+      icon: 'bx bx-face',
+      name: 'Barba',
+      description: 'Definizione barba, rifinitura dei contorni e trattamento premium.',
+      duration: '25 min',
+      price: '€15'
+    },
+    {
+      icon: 'bx bx-crown',
+      name: 'Taglio + Barba',
+      description: 'Esperienza completa per un look curato, elegante e sempre ordinato.',
+      duration: '55 min',
+      price: '€30'
+    }
+  ];
+
+
 }

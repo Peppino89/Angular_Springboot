@@ -104,3 +104,68 @@
   </div>
 
 </section>
+<section class="featured-services section">
+
+  <div class="container">
+
+    <div class="section-title featured-services__header">
+
+      <span>I nostri servizi</span>
+
+      <h2>
+        Scegli il trattamento più adatto al tuo stile.
+      </h2>
+
+      <p>
+        Dai tagli classici alle sfumature moderne, BarberBooking ti permette
+        di prenotare il servizio giusto in pochi click.
+      </p>
+
+    </div>
+
+    <div class="featured-services__grid">
+
+      @for (service of featuredServices; track service.name) {
+
+        <article class="service-card fade-up">
+
+          <div class="service-card__icon">
+            <i [class]="service.icon"></i>
+          </div>
+
+          <div class="service-card__content">
+
+            <h3>{{ service.name }}</h3>
+
+            <p>{{ service.description }}</p>
+
+            <div class="service-card__meta">
+
+              <span>
+                <i class="bx bx-time-five"></i>
+                {{ service.duration }}
+              </span>
+
+              <strong>{{ service.price }}</strong>
+
+            </div>
+
+          </div>
+
+          <a routerLink="/auth/register" class="service-card__link">
+            <span>Prenota</span>
+            <i class="bx bx-right-arrow-alt"></i>
+          </a>
+
+        </article>
+
+      }
+    </div>
+    <div class="featured-services__action">
+      <a routerLink="/services" class="btn btn-outline">
+        <i class="bx bx-list-ul"></i>
+        <span>Vedi tutti i servizi</span>
+      </a>
+    </div>
+  </div>
+</section>
