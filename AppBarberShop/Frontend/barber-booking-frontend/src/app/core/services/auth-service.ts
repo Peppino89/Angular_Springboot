@@ -1,5 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 import { User } from '../models/auth/user';
 import { Role } from '../models/auth/role';
 import { RegisterRequest } from '../models/auth/register-request';
@@ -11,45 +13,41 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly http = inject(HttpClient);
 
-  private readonly http= inject(HttpClient);
-
-  private readonly tokenSignal= signal<string|null>(localStorage.getItem('token'));
-  private readonly userSignal = signal<User|null>(this.loadUserFromStorage());
+  private readonly tokenSignal = signal<string | null>(localStorage.getItem('token'));
+  private readonly userSignal = signal<User | null>(this.loadUserFromStorage());
 
   readonly token = this.tokenSignal.asReadonly();
   readonly currentUser = this.userSignal.asReadonly();
 
-  readonly isLoggedIn= computed(()=>!!this.tokenSignal());
-  readonly isAdmin= computed(()=>this.userSignal()?.role === Role.ADMIN);
+  readonly isLoggedIn = computed(() => !!this.tokenSignal());
+  readonly isAdmin = computed(() => this.userSignal()?.role === Role.ADMIN);
 
-  login(request: LoginRequest){
+  login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, request);
   }
 
-  register(request: RegisterRequest){
+  register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, request);
   }
 
-  saveAuth(response: AuthResponse):void{
-
+  saveAuth(response: AuthResponse): void {
     localStorage.setItem('token', response.token);
 
     const user: User = {
-
-      username:response.username,
+      username: response.username,
       email: response.email,
       role: response.role,
-    }
+    };
 
     localStorage.setItem('user', JSON.stringify(user));
 
     this.tokenSignal.set(response.token);
     this.userSignal.set(user);
-
   }
 
-  logout():void{
+  logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
 
@@ -57,12 +55,19 @@ export class AuthService {
     this.userSignal.set(null);
   }
 
-  private loadUserFromStorage(): User | null{
+  private loadUserFromStorage(): User | null {
     const userJson = localStorage.getItem('user');
 
     if (!userJson) {
       return null;
     }
-    return JSON.parse(userJson) as User;
+
+    try {
+      return JSON.parse(userJson) as User;
+    } catch {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      return null;
+    }
   }
 }
