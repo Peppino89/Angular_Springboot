@@ -74,7 +74,7 @@
 
   <div class="container">
     <div class="section-title how-it-works__header">
-       <span>Come funziona</span>
+      <span>Come funziona</span>
       <h2>Prenotare il tuo taglio non è mai stato così semplice.</h2>
 
       <p>
@@ -85,15 +85,15 @@
 
     <div class="how-it-works__grid">
 
-      @for(step of howItWorksSteps; track step.title; let index=$index){
+      @for (step of howItWorksSteps; track step.title; let index = $index) {
 
         <article class="how-step fade-up">
           <div class="how-step__number">
-           0{{ index + 1 }}
+            0{{ index + 1 }}
           </div>
-         <div class="how-step__icon">
-           <i [class]="step.icon"></i>
-         </div>
+          <div class="how-step__icon">
+            <i [class]="step.icon"></i>
+          </div>
           <h3>{{ step.title }}</h3>
           <p>{{ step.description }}</p>
         </article>
@@ -124,12 +124,15 @@
 
     </div>
 
-    @if(servicesLoading()){
+    @if (servicesLoading()) {
+
       <div class="featured-services__state">
         <i class="bx bx-loader-alt bx-spin"></i>
         <p>Caricamento servizi in evidenza...</p>
       </div>
-    } @else if (servicesErrorMessage()){
+
+    } @else if (servicesErrorMessage()) {
+
       <div class="featured-services__state featured-services__state--error">
         <i class="bx bx-error-circle"></i>
         <p>{{ servicesErrorMessage() }}</p>
@@ -139,48 +142,103 @@
           <span>Riprova</span>
         </button>
       </div>
+
+    } @else {
+
+      <div class="featured-services__grid">
+
+        @for (service of featuredServices(); track service.id) {
+
+          <article class="service-card fade-up">
+
+            @if (service.imageUrl) {
+              <div class="service-card__image">
+                <img
+                  [src]="getImageUrl(service.imageUrl)"
+                  [alt]="service.name"
+                >
+              </div>
+            }
+
+            <div class="service-card__content">
+
+              <div class="service-card__top">
+                <div class="service-card__icon">
+                  <i class="bx bx-cut"></i>
+                </div>
+
+                <strong class="service-card__price">
+                  €{{ service.price }}
+                </strong>
+              </div>
+
+              <h3>{{ service.name }}</h3>
+
+              <p>{{ service.description }}</p>
+
+              <div class="service-card__meta">
+
+                <span>
+                  <i class="bx bx-time-five"></i>
+                  {{ service.durationMinutes }} min
+                </span>
+
+                <span>
+                  <i class="bx bx-check-circle"></i>
+                  Disponibile
+                </span>
+
+              </div>
+
+            </div>
+
+            <a routerLink="/auth/register" class="service-card__link">
+              <span>Prenota</span>
+              <i class="bx bx-right-arrow-alt"></i>
+            </a>
+
+          </article>
+
+        }
+
+      </div>
+
+      <div class="featured-services__action">
+        <a routerLink="/services" class="btn btn-outline">
+          <i class="bx bx-list-ul"></i>
+          <span>Vedi tutti i servizi</span>
+        </a>
+      </div>
+
     }
 
-    <div class="featured-services__grid">
-
-      @for (service of featuredServices(); track service.id) {
-
-
-
-      }
-    </div>
-    <div class="featured-services__action">
-      <a routerLink="/services" class="btn btn-outline">
-        <i class="bx bx-list-ul"></i>
-        <span>Vedi tutti i servizi</span>
-      </a>
-    </div>
   </div>
+
 </section>
 <section class="home-cta section">
-<div class="container">
-  <div class="home-cta__box fade-up">
-    <div class="home-cta__content">
-      <span class="home-cta__eyebrow">Pronto per il tuo prossimo taglio?</span>
-      <h2>Trasforma il tuo prossimo taglio in un’esperienza semplice e premium.</h2>
-      <p>
-        Scegli il servizio, trova l’orario più comodo e lascia che BarberBooking
-        renda ogni prenotazione più rapida, ordinata e senza stress.
-      </p>
-    </div>
+  <div class="container">
+    <div class="home-cta__box fade-up">
+      <div class="home-cta__content">
+        <span class="home-cta__eyebrow">Pronto per il tuo prossimo taglio?</span>
+        <h2>Trasforma il tuo prossimo taglio in un’esperienza semplice e premium.</h2>
+        <p>
+          Scegli il servizio, trova l’orario più comodo e lascia che BarberBooking
+          renda ogni prenotazione più rapida, ordinata e senza stress.
+        </p>
+      </div>
 
-    <div class="home-cta__actions">
-     <a routerLink="/auth/register" class="btn btn-primary">
-       <i class="bx bx-calendar-plus"></i>
-       <span>Prenota ora</span>
-     </a>
+      <div class="home-cta__actions">
+        <a routerLink="/auth/register" class="btn btn-primary">
+          <i class="bx bx-calendar-plus"></i>
+          <span>Prenota ora</span>
+        </a>
 
-      <a routerLink="/services" class="btn btn-outline home-cta__outline">
-        <i class="bx bx-cut"></i>
-        <span>Scopri i servizi</span>
-      </a>
+        <a routerLink="/services" class="btn btn-outline home-cta__outline">
+          <i class="bx bx-cut"></i>
+          <span>Scopri i servizi</span>
+        </a>
 
+      </div>
     </div>
   </div>
-</div>
 </section>
