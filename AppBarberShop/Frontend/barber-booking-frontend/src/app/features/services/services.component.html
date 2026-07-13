@@ -1,1 +1,106 @@
-<p>services works!</p>
+<section class="services-page section">
+  <div class="container">
+
+    <div class="section-title services-page__header">
+      <span>I nostri servizi</span>
+
+      <h1>
+        Scegli il servizio perfetto per il tuo stile.
+      </h1>
+
+      <p>
+        Dai tagli classici alle sfumature moderne, prenota il trattamento più adatto a te
+        in pochi click.
+      </p>
+    </div>
+
+    @if (loading()) {
+
+      <div class="services-state">
+        <i class="bx bx-loader-alt bx-spin"></i>
+        <p>Caricamento servizi...</p>
+      </div>
+
+    } @else if (errorMessage()) {
+
+      <div class="services-state services-state--error">
+        <i class="bx bx-error-circle"></i>
+        <p>{{ errorMessage() }}</p>
+
+        <button class="btn btn-primary" type="button" (click)="loadServices()">
+          <i class="bx bx-refresh"></i>
+          <span>Riprova</span>
+        </button>
+      </div>
+
+    } @else if (!hasServices()) {
+
+      <div class="services-state">
+        <i class="bx bx-info-circle"></i>
+        <p>Al momento non ci sono servizi disponibili.</p>
+      </div>
+
+    } @else {
+
+      <div class="services-grid">
+
+        @for (service of services(); track service.id) {
+
+          <article class="service-card fade-up">
+
+            @if (service.imageUrl) {
+              <div class="service-card__image">
+                <img
+                  [src]="getImageUrl(service.imageUrl)"
+                  [alt]="service.name"
+                >
+              </div>
+            }
+
+            <div class="service-card__body">
+
+              <div class="service-card__top">
+                <span class="service-card__icon">
+                  <i class="bx bx-cut"></i>
+                </span>
+
+                <strong class="service-card__price">
+                  €{{ service.price }}
+                </strong>
+              </div>
+
+              <h2>{{ service.name }}</h2>
+
+              <p>{{ service.description }}</p>
+
+              <div class="service-card__meta">
+
+                <span>
+                  <i class="bx bx-time-five"></i>
+                  {{ service.durationMinutes }} min
+                </span>
+
+                <span>
+                  <i class="bx bx-check-circle"></i>
+                  Disponibile
+                </span>
+
+              </div>
+
+              <a routerLink="/auth/register" class="service-card__cta">
+                <span>Prenota servizio</span>
+                <i class="bx bx-right-arrow-alt"></i>
+              </a>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    }
+
+  </div>
+</section>
