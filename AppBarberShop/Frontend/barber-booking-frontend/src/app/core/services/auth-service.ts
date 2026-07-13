@@ -5,7 +5,7 @@ import { Role } from '../models/auth/role';
 import { RegisterRequest } from '../models/auth/register-request';
 import { LoginRequest } from '../models/auth/login-request';
 import { AuthResponse } from '../models/auth/auth-response';
-import { environment } from '../../../environments/enivorment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

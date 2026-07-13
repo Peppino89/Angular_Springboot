@@ -124,41 +124,28 @@
 
     </div>
 
+    @if(servicesLoading()){
+      <div class="featured-services__state">
+        <i class="bx bx-loader-alt bx-spin"></i>
+        <p>Caricamento servizi in evidenza...</p>
+      </div>
+    } @else if (servicesErrorMessage()){
+      <div class="featured-services__state featured-services__state--error">
+        <i class="bx bx-error-circle"></i>
+        <p>{{ servicesErrorMessage() }}</p>
+
+        <button class="btn btn-primary" type="button" (click)="loadFeaturedServices()">
+          <i class="bx bx-refresh"></i>
+          <span>Riprova</span>
+        </button>
+      </div>
+    }
+
     <div class="featured-services__grid">
 
-      @for (service of featuredServices; track service.name) {
+      @for (service of featuredServices(); track service.id) {
 
-        <article class="service-card fade-up">
 
-          <div class="service-card__icon">
-            <i [class]="service.icon"></i>
-          </div>
-
-          <div class="service-card__content">
-
-            <h3>{{ service.name }}</h3>
-
-            <p>{{ service.description }}</p>
-
-            <div class="service-card__meta">
-
-              <span>
-                <i class="bx bx-time-five"></i>
-                {{ service.duration }}
-              </span>
-
-              <strong>{{ service.price }}</strong>
-
-            </div>
-
-          </div>
-
-          <a routerLink="/auth/register" class="service-card__link">
-            <span>Prenota</span>
-            <i class="bx bx-right-arrow-alt"></i>
-          </a>
-
-        </article>
 
       }
     </div>
