@@ -1,1 +1,121 @@
-<p>register-component works!</p>
+<section class="auth-page">
+  <div class="auth-card fade-up">
+    <div class="auth-card__header">
+      <a routerLink="/" class="auth-card__brand">
+        <span class="auth-card__logo">
+          <i class="bx bx-cut"></i>
+        </span>
+        <span>BarberBooking</span>
+      </a>
+      <span class="auth-card__eyebrow">Crea il tuo account</span>
+      <h1>Prenota il tuo prossimo taglio in pochi click</h1>
+      <p>Registrati per scegliere il servizio, selezionare data e ora e gestire le tue prenotazioni online.</p>
+    </div>
+
+    @if(errorMessage()){
+      <div class="auth-alert">
+        <i class="bx bx-error-circle"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="submit()">
+      <!--Username-->
+      <div class="form-field">
+        <label for="username">Username</label>
+        <div class="form-control">
+          <i class="bx bx-user"></i>
+          <input  id="username" type="text" placeholder="Es. Mario" formControlName="username">
+        </div>
+        @if(username().touched && username().hasError('required')){
+          <small>Lo username è obbligatorio</small>
+        }
+
+        @if(username().touched && username().hasError('minlength')){
+          <small>La password deve avere almeno 3 caratteri</small>
+        }
+      </div>
+
+      <!--Email-->
+      <div class=" form-field">
+        <label for="email">Email</label>
+
+        <div class="form-control">
+          <i class="bx bx-envelope"></i>
+          <input id="email" type="email" placeholder="esempio@email.com" formControlName="email">
+        </div>
+        @if (email().touched && email().hasError('required')) {
+          <small>L'email è obbligatoria.</small>
+        }
+
+        @if (email().touched && email().hasError('email')) {
+          <small>Inserisci un indirizzo email valido.</small>
+        }
+
+      </div>
+
+      <!--Password-->
+      <div class=" form-field">
+        <label for="password">Password</label>
+
+        <div class="form-control">
+          <i class="bx bx-lock-alt"></i>
+          <input id="password" [type]="showPassword() ? 'text' : 'password' "  placeholder="Minimo 6 caratteri" formControlName="password" >
+          <button class=" password-toggle" type="button" (click)="togglePassword()" aria-label="Mostra o nascondi password">
+            <i [class]="showPassword() ? 'bx bx-hide' : 'bx bx-show' "></i>
+          </button>
+        </div>
+        @if (password().touched && password().hasError('required')) {
+          <small>La password è obbligatoria.</small>
+        }
+
+        @if (password().touched && password().hasError('minlength')) {
+          <small>La password deve contenere almeno 6 caratteri.</small>
+        }
+
+        @if (password().touched && password().hasError('pattern')) {
+          <small>  La password deve contenere almeno una maiuscola,
+            una minuscola e un carattere speciale.</small>
+        }
+
+      </div>
+
+      <!--Confirm Password-->
+      <div class=" form-field">
+        <label for="confirmPassword">Conferma password</label>
+
+        <div class="form-control">
+          <i class="bx bx-lock-alt"></i>
+          <input id="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password' "  placeholder="Ripeti la password" formControlName="confirmPassword" >
+          <button class=" password-toggle" type="button" (click)="toggleConfirmPassword()" aria-label="Mostra o nascondi conferma password">
+            <i [class]="showConfirmPassword() ? 'bx bx-hide' : 'bx bx-show' "></i>
+          </button>
+        </div>
+        @if (confirmPassword().touched && confirmPassword().hasError('required')) {
+          <small>La conferma password è obbligatoria.</small>
+        }
+
+        @if (confirmPassword().touched && registerForm.hasError('passwordsMismatch')) {
+          <small>Le password non coincidono.</small>
+        }
+      </div>
+
+      <button class="btn btn-primary auth-submit" type="submit" [disabled]="loading()" >
+        @if(loading()){
+          <i class="bx bx-loader-alt bx-spin"></i>
+          <span>Creazione account...</span>
+        }@else{
+          <i class="bx bx-calendar-plus"></i>
+          <span>Registrati e prenota</span>
+        }
+      </button>
+
+    </form>
+
+    <p class="auth-switch">
+      Hai già un account?
+      <a routerLink="/auth/login">Accedi</a>
+    </p>
+
+  </div>
+</section>
