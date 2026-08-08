@@ -65,8 +65,10 @@ public class BookingController {
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<BookingResponse> updateBookingStatus(@PathVariable Long id, @Valid @RequestBody BookingStatusRequest request, @AuthenticationPrincipal UserDetails user) {
-        return ResponseEntity.ok(bookingService.updateBooking(id,request, user.getUsername()));
+    public ResponseEntity<BookingResponse> updateBookingStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody BookingStatusRequest request) {
+        return ResponseEntity.ok(bookingService.updateBooking(id, request));
     }
 
     @PostMapping
@@ -75,8 +77,8 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBooking(@PathVariable Long id, @AuthenticationPrincipal UserDetails user) {
-        bookingService.deleteBooking(id, user.getUsername());
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
+        bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }
 

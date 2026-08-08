@@ -3,9 +3,11 @@ package com.example.barberbooking.exception;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
@@ -50,6 +52,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFileStorageException(FileStorageException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse("400", e.getMessage()));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        ErrorResponse error = new ErrorResponse(
+                "400",
+                "Il file non può superare i 2 MB"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
     }
 
     @ExceptionHandler(EmailUsernamAlreadyExistsException.class)
@@ -110,11 +124,20 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("404","Risosrsa non trovata"));
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("400","Credenziali non valide. Verifica username e password" ));
+    }
+
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException e){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("400",e.getMessage()));
     }
+
+
 
 }
