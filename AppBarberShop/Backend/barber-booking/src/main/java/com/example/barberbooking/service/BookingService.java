@@ -1,7 +1,6 @@
 package com.example.barberbooking.service;
 
 import com.example.barberbooking.dto.request.*;
-import com.example.barberbooking.dto.*;
 import com.example.barberbooking.dto.response.BookingResponse;
 import com.example.barberbooking.dto.response.PageResponse;
 import com.example.barberbooking.entity.BarberService;
@@ -16,6 +15,7 @@ import com.example.barberbooking.specification.BookingSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -83,26 +83,26 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public BookingResponse updateBooking(Long id, BookingStatusRequest request, String username) {
+    // L'ADMIN può modificare qualsiasi prenotazione; un USER solo la propria.
+    @PreAuthorize(
+            "hasRole('ADMIN') or @bookingAuthorization.isOwner(#id, authentication.name)"
+    )
+    public BookingResponse updateBooking(Long id, BookingStatusRequest request) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(()->new BookingNotFoundException("Prenotazione non trovata"));
+                .orElseThrow(() -> new BookingNotFoundException("Prenotazione non trovata"));
 
+        booking.setStatus(request.getStatus());
 
-        if(!booking.getUser().getUsername().equals(username)){
-            throw new UnauthorizedException("Non sei autorizzato a modificare questa prenotazione");
-        }
-
-           booking.setStatus(request.getStatus());
-
-           return toResponse(bookingRepository.save(booking));
+        return toResponse(bookingRepository.save(booking));
     }
 
-    public void deleteBooking(Long id, String username) {
+    // L'ADMIN può eliminare qualsiasi prenotazione; un USER solo la propria.
+    @PreAuthorize(
+            "hasRole('ADMIN') or @bookingAuthorization.isOwner(#id, authentication.name)"
+    )
+    public void deleteBooking(Long id) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(()->new BookingNotFoundException("Prenotazione non trovata"));
-        if(!booking.getUser().getUsername().equals(username)){
-            throw new UnauthorizedException("Non sei autorizzato a eliminare questa prenotazione");
-        }
+                .orElseThrow(() -> new BookingNotFoundException("Prenotazione non trovata"));
 
         bookingRepository.delete(booking);
     }

@@ -48,7 +48,7 @@ public class AuthService {
 
         userRepository.save(user);
        String token = jwtService.generateToken(user);
-        return new AuthResponse(token,user.getUsername(),user.getEmail());
+        return new AuthResponse(token,user.getUsername(),user.getEmail(),user.getRole());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -68,7 +68,7 @@ public class AuthService {
 //            throw new InvalidPasswordException("Password non valida");
 //        }
          String token = jwtService.generateToken(user);
-        return new AuthResponse(token,user.getUsername(),user.getEmail());
+        return new AuthResponse(token,user.getUsername(),user.getEmail(),user.getRole());
     }
 
 
