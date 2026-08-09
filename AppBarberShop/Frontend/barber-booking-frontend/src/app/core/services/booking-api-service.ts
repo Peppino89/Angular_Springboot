@@ -1,38 +1,35 @@
-import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { inject, Injectable } from '@angular/core';
+
 import { Observable } from 'rxjs';
-import { BookingResponse } from '../models/booking/booking-response';
+
+import { environment } from '../../../environments/environment';
 import { BookingRequest } from '../models/booking/booking-request';
+import { BookingResponse } from '../models/booking/booking-response';
 import { BookingStatus } from '../models/booking/booking-status';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BookingApiService {
-
   private readonly http = inject(HttpClient);
-  private readonly apiUrl= `${environment.apiUrl}`;
+  private readonly apiUrl = `${environment.apiUrl}/bookings`;
 
-  getMyBookings():Observable<BookingResponse[]>{
-    return this.http.get<BookingResponse[]>(`${this.apiUrl}/bookings/user/me`);
-}
+  getMyBookings(): Observable<BookingResponse[]> {
+    return this.http.get<BookingResponse[]>(`${this.apiUrl}/user/me`);
+  }
 
-createBookings(request: BookingRequest): Observable<BookingResponse>{
-   return this.http.post<BookingResponse>(this.apiUrl,request);
-}
+  createBooking(request: BookingRequest): Observable<BookingResponse> {
+    return this.http.post<BookingResponse>(this.apiUrl, request);
+  }
 
-deleteBookings(id: number): Observable<void>{
+  deleteBooking(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-}
+  }
 
-updateBooking(id: number, status: BookingStatus): Observable<BookingResponse>{
-    return this.http.patch<BookingResponse>(`${this.apiUrl}/${id}/status`,{
+  updateBookingStatus(id: number, status: BookingStatus): Observable<BookingResponse> {
+    return this.http.patch<BookingResponse>(`${this.apiUrl}/${id}/status`, {
       status,
     });
-}
-
-
-
-
+  }
 }
