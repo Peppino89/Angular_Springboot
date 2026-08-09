@@ -1,0 +1,5 @@
+export enum BookingStatus{
+  IN_ATTESA = "IN_ATTESA",
+  CONFERMATA = "CONFERMATA",
+  ANNULLATA = "ANNULLATA"
+}

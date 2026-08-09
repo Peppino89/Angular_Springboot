@@ -92,15 +92,6 @@
   width: 100%;
 }
 
-.public-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.public-actions .btn i {
-  font-size: 1.15rem;
-}
 
 .menu-toggle {
   display: none;
@@ -159,6 +150,75 @@
   font-size: 1.15rem;
 }
 
+
+
+.mobile-menu__logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-dark);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mobile-menu__logout i {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+}
+
+.mobile-menu__logout:hover {
+  background: rgba(255, 154, 0, 0.12);
+  color: var(--color-primary);
+}
+
+.public-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.public-actions .btn {
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+}
+
+.public-actions .btn span {
+  white-space: nowrap;
+}
+
+.public-actions .btn i {
+  font-size: 1.15rem;
+}
+
+.public-actions .btn-primary {
+  padding-inline: 1.15rem;
+}
+
+@media (max-width: 1250px) {
+  .public-nav {
+    gap: 1rem;
+  }
+
+  .public-actions {
+    gap: 0.5rem;
+  }
+
+  .public-actions .btn {
+    padding-inline: 0.85rem;
+    font-size: 0.9rem;
+  }
+}
 @media (max-width: 960px) {
   .public-nav,
   .public-actions {
