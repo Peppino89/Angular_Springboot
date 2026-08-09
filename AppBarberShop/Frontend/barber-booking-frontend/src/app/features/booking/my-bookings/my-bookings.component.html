@@ -10,90 +10,140 @@
             Qui puoi controllare gli appuntamenti che hai prenotato e gestire le tue richieste.
           </p>
         </div>
+
         <button class="btn btn-outline" type="button" (click)="loadMyBookings()">
-        <i class="bx bx-refresh"></i>
+          <i class="bx bx-refresh"></i>
           <span>Aggiorna</span>
         </button>
       </div>
     </div>
-    @if(loading()){
+
+    @if (loading()) {
       <div class="bookings-state fade-up">
         <i class="bx bx-loader-alt bx-spin"></i>
         <h2>Caricamento prenotazioni...</h2>
         <p>Stiamo recuperando i tuoi appuntamenti...</p>
       </div>
-    }@else if(errorMessage()){
+    } @else if (errorMessage()) {
       <div class="bookings-state bookings-state--error fade-up">
         <i class="bx bx-error-circle"></i>
         <h2>Qualcosa è andato storto</h2>
         <p>{{ errorMessage() }}</p>
-      </div>
 
-      <button class="btn btn-primary" type="button"(click)="loadMyBookings()" >
-        <i class="bx bx-refresh"></i>
-        <span>Riprova</span>
-      </button>
-    }@else if(!hasBookings()){
+        <button class="btn btn-primary" type="button" (click)="loadMyBookings()">
+          <i class="bx bx-refresh"></i>
+          <span>Riprova</span>
+        </button>
+      </div>
+    } @else if (!hasBookings()) {
       <div class="bookings-state fade-up">
         <i class="bx bx-calendar-x"></i>
         <h2>Nessuna prenotazione trovata</h2>
-        <p>Scegli un trattamento e prenota il tuo appuntamento.</p>
+        <p>
+          Non hai ancora prenotato nessun servizio.
+          Scegli un trattamento e prenota il tuo appuntamento.
+        </p>
 
         <a routerLink="/services" class="btn btn-primary">
           <i class="bx bx-cut"></i>
-          <span>Scopri di più</span>
+          <span>Scopri i servizi</span>
         </a>
       </div>
-    }@else{
+    } @else {
       <div class="bookings-grid fade-up">
-        @for(booking of bookings(); track booking.id){
-           <article class="booking-card">
-             <div class="booking-card__top">
-               <div class="bookiing-card__icon">
-                 <i class="bx bx-calendar-check"></i>
-               </div>
-               <span class="booking-card__status" [class]="getStatusClass(booking.status)">
-                 {{ getStatusLabel(booking.status) }}
-               </span>
-             </div>
+        @for (booking of bookings(); track booking.id) {
+          <article class="booking-card">
+            <div class="booking-card__top">
+              <div class="booking-card__icon">
+                <i class="bx bx-calendar-check"></i>
+              </div>
 
-             <div class="booking-card__body">
-               <h2>{{ booking.serviceName }}</h2>
-               <p>
-                 <i class="bx bx-time-five"></i>
-                 <span>{{ formDateTime(booking.appointmentDateTime) }}</span>
-               </p>
+              <span class="booking-card__status" [class]="'booking-card__status ' + getStatusClass(booking.status)">
+                {{ getStatusLabel(booking.status) }}
+              </span>
+            </div>
 
-               <p>
-                 <i class="bx bx-user"></i>
-                 <span>{{ booking.username}}</span>
-               </p>
-             </div>
+            <div class="booking-card__body">
+              <h2>{{ booking.serviceName }}</h2>
 
-             <div class="booking-card__footer">
-               <button
-                 class="btn btn-outline booking-card__delete"
-                 type="button"
-                 (click)="openDeleteModal(booking)"
-                 [disabled]="deletingBookingId() === booking.id"
-               >
-                 <i class="bx bx-trash"></i>
-                 <span>Elimina</span>
-               </button>
-             </div>
-           </article>
+              <p>
+                <i class="bx bx-time-five"></i>
+                <span>{{ formatDateTime(booking.appointmentDateTime) }}</span>
+              </p>
+
+              <p>
+                <i class="bx bx-user"></i>
+                <span>{{ booking.username }}</span>
+              </p>
+            </div>
+
+            <div class="booking-card__footer">
+              <button
+                class="btn btn-outline booking-card__delete"
+                type="button"
+                (click)="openDeleteModal(booking)"
+                [disabled]="deletingBookingId() === booking.id"
+              >
+                <i class="bx bx-trash"></i>
+                <span>Elimina</span>
+              </button>
+            </div>
+          </article>
         }
-
       </div>
     }
   </div>
 
-  @if(bookingsToDelete()){
+  @if (bookingToDelete()) {
     <div class="booking-modal-backdrop" (click)="closeDeleteModal()">
-      <div class="book">
+      <div class="booking-modal" (click)="$event.stopPropagation()">
+        <div class="booking-modal__icon">
+          <i class="bx bx-trash"></i>
+        </div>
 
+        <h2>Vuoi davvero eliminare la prenotazione?</h2>
+
+        <p>
+          Stai per eliminare la prenotazione per
+          <strong>{{ bookingToDelete()?.serviceName }}</strong>
+          del
+          <strong>{{ formatDateTime(bookingToDelete()!.appointmentDateTime) }}</strong>.
+        </p>
+
+        @if (deleteErrorMessage()) {
+          <div class="booking-modal__error">
+            <i class="bx bx-error-circle"></i>
+            <span>{{ deleteErrorMessage() }}</span>
+          </div>
+        }
+
+        <div class="booking-modal__actions">
+          <button
+            class="btn btn-outline"
+            type="button"
+            (click)="closeDeleteModal()"
+            [disabled]="deletingBookingId() === bookingToDelete()?.id"
+          >
+            <i class="bx bx-x"></i>
+            <span>Annulla</span>
+          </button>
+
+          <button
+            class="btn btn-primary booking-modal__confirm"
+            type="button"
+            (click)="confirmDeleteBooking()"
+            [disabled]="deletingBookingId() === bookingToDelete()?.id"
+          >
+            @if (deletingBookingId() === bookingToDelete()?.id) {
+              <i class="bx bx-loader-alt bx-spin"></i>
+              <span>Eliminazione...</span>
+            } @else {
+              <i class="bx bx-trash"></i>
+              <span>Sì, cancella prenotazione</span>
+            }
+          </button>
+        </div>
       </div>
     </div>
   }
-
 </section>
