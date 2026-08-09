@@ -1,7 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
 import { User } from '../models/auth/user';
 import { Role } from '../models/auth/role';
 import { RegisterRequest } from '../models/auth/register-request';
@@ -21,8 +20,12 @@ export class AuthService {
   readonly token = this.tokenSignal.asReadonly();
   readonly currentUser = this.userSignal.asReadonly();
 
-  readonly isLoggedIn = computed(() => !!this.tokenSignal());
+  readonly isLoggedIn = computed(() => !!this.tokenSignal() && !!this.userSignal());
   readonly isAdmin = computed(() => this.userSignal()?.role === Role.ADMIN);
+
+  constructor() {
+     this.checkStoredSession();
+  }
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, request);
@@ -31,6 +34,46 @@ export class AuthService {
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, request);
   }
+
+
+  isTokenExpired(token:string){
+    const payload = this.getTokenPayload(token);
+
+    if(!payload?.exp){
+      return true;
+    }
+    const expirationDate = payload.exp * 1000;//converto in millisecondi perchè il JWT è esperesso in milleSecondi
+    const now = Date.now();
+
+    return now >= expirationDate;
+
+  }
+
+  checkStoredSession():void{
+    const token = this.tokenSignal();
+    if(!token){
+      this.logout();
+      return;
+    }
+
+    if(this.isTokenExpired(token)){
+      this.logout();
+    }
+  }
+
+  private getTokenPayload(token: string): any | null{
+    try{
+      const payloadBase64 = token.split('.')[1];
+      if (!payloadBase64) {
+        return null;
+      }
+      const payloadJson = atob(payloadBase64); //decodifica da Base64 a testo leggibile
+      return JSON.parse(payloadJson);
+    }catch{
+      return null;
+    }
+  }
+
 
   saveAuth(response: AuthResponse): void {
     localStorage.setItem('token', response.token);

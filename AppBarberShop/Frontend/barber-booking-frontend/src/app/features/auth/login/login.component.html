@@ -1,1 +1,81 @@
-<p>login works!</p>
+<section class="auth-page">
+<div class="auth-card fade-up">
+  <div class="auth-card__header">
+    <a routerLink="/" class="auth-card__brand">
+      <span class="auth-card__logo">
+        <i class="bx bx-cut"></i>
+      </span>
+      <span>BarberBooking</span>
+    </a>
+    <span class="auth-card__eyebrow">Bentornato</span>
+    <h1>Accedi e gestisci le tue prenotazioni.</h1>
+    <p>
+      Entra nel tuo account per prenotare un nuovo appuntamento,
+     controllare i tuoi servizi e gestire le tue prenotazioni.
+    </p>
+  </div>
+
+  @if(errorMessage()){
+    <div class="auth-alert">
+      <i class="bx bx-error-circle"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+  @if(infoMessage()){
+    <div class="auth-info">
+      <i class="bx bx-info-circle"></i>
+       <span>{{ infoMessage() }}</span>
+    </div>
+  }
+
+<form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submit()">
+  <!--Username-->
+  <div class="form-field">
+    <label for="username">Username</label>
+    <div class="form-control">
+      <i class="bx bx-user"></i>
+      <input id="username" type="text" placeholder="Es.Mario" formControlName="username"/>
+    </div>
+    @if(username().touched && username().hasError('required')){
+      <small>Lo username è obbligatorio.</small>
+    }
+  </div>
+
+  <!--Password-->
+  <div class="form-field">
+    <label for="username">Password</label>
+    <div class="form-control">
+      <i class="bx bx-user"></i>
+      <input id="password"
+             [type]="showPassword() ? 'text' : 'password' "
+             placeholder="Inserisci la password"
+             formControlName="password"/>
+      <button
+      class="password-toggle"
+      type="button"
+      (click)="togglePassword()"
+      aria-label="mostra o nascondi password">
+        <i [class]="showPassword() ? 'bx bx-hide' :  'bx bx-show'"></i>
+      </button>
+    </div>
+    @if(password().touched && password().hasError('required')){
+      <small>La password è obbligatoria.</small>
+    }
+  </div>
+
+  <button class="btn btn-primary auth-submit" type="submit" [disabled]="loading()" >
+    @if(loading()){
+      <i class="bx bx-loader-alt bx-spin"></i>
+      <span>Accessp in corso</span>
+    }@else{
+      <i class="bx bx-log-in"></i>
+      <span>Accedi</span>
+    }
+  </button>
+</form>
+<p class="auth-switch">
+  Non hai ancora un account ?
+  <a routerLink="/auth/register">Registrati</a>
+</p>
+</div>
+</section>

@@ -26,22 +26,52 @@
           <span>Chi siamo</span>
         </a>
 
+        @if(!isLoggedIn()){
         <a routerLink="/bookings" routerLinkActive="active">
           <i class="bx bx-calendar"></i>
           <span>Prenotazioni</span>
         </a>
+        }
       </nav>
 
       <div class="public-actions">
-        <a routerLink="/auth/login" class="btn btn-outline">
-          <i class="bx bx-log-in"></i>
-          <span>Accedi</span>
+
+        @if(isLoggedIn() && currentUser()){
+        <a routerLink="/bookings" class="btn btn-outline">
+          <i class="bx bx-user"></i>
+          <span>Ciao {{ currentUser()?.username }}</span>
         </a>
 
-        <a routerLink="/auth/register" class="btn btn-primary">
-          <i class="bx bx-calendar-plus"></i>
-          <span>Prenota</span>
-        </a>
+          @if(isAdmin()){
+            <a routerLink="/admin" class="btn btn-primary">
+              <i class="bx bx-layout"></i>
+              <span>Dashboard</span>
+            </a>
+          }@else{
+            <a routerLink="/bookings" class="btn btn-primary">
+              <i class="bx bx-layout"></i>
+              <span>Le mie prenotazioni</span>
+            </a>
+          }
+
+          <button class="btn btn-outline" type="button" (click)="logout()">
+            <i class="bx bx-log-out"></i>
+            <span>Esci</span>
+          </button>
+
+        }
+
+        @else {
+          <a routerLink="/auth/login" class="btn btn-outline">
+            <i class="bx bx-log-in"></i>
+            <span>Accedi</span>
+          </a>
+
+          <a routerLink="/auth/register" class="btn btn-primary">
+            <i class="bx bx-calendar-plus"></i>
+            <span>Prenota</span>
+          </a>
+        }
       </div>
 
       <button
@@ -77,15 +107,42 @@
       <span>Prenotazioni</span>
     </a>
 
-    <a routerLink="/auth/login" (click)="closeMenu()">
-      <i class="bx bx-log-in"></i>
-      <span>Accedi</span>
-    </a>
+    @if(isLoggedIn() && currentUser()){
+      <a routerLink= "/bookings" (click)="closeMenu()">
+        <i class="bx bx-user"></i>
+        <span>Ciao {{ currentUser()?.username }}</span>
+      </a>
 
-    <a routerLink="/auth/register" class="mobile-menu__cta" (click)="closeMenu()">
-      <i class="bx bx-calendar-plus"></i>
-      <span>Prenota ora</span>
-    </a>
+      @if(isAdmin()){
+        <a routerLink="/admin"  class="mobile-menu__cta" (click)="closeMenu()">
+          <i class="bx bx-layou"></i>
+          <span>Dashboard</span>
+        </a>
+      }@else{
+        <a routerLink="/bookings"  class="mobile-menu__cta" (click)="closeMenu()">
+          <i class="bx bx-check"></i>
+          <span>Le mie prenotazioni</span>
+        </a>
+      }
+      <button class="mobile-menu__logout" type="button" (click)="logout()">
+        <i class="bx bx-log-out"></i>
+        <span>Esci</span>
+      </button>
+
+    } @else {
+
+
+      <a routerLink="/auth/login" class="btn btn-outline">
+        <i class="bx bx-log-in"></i>
+        <span>Accedi</span>
+      </a>
+
+      <a routerLink="/auth/register" class="btn btn-primary">
+        <i class="bx bx-calendar-plus"></i>
+        <span>Prenota ora</span>
+      </a>
+
+    }
   </nav>
 
   <main class="public-main">
