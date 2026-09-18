@@ -27,6 +27,10 @@ public class Booking {
     @Column(nullable = false)
     private BookingStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "barber_id", nullable = false)
+    private Barber barber;
+
     @ManyToOne
     @JoinColumn(name="user_id",nullable = false) //chiavi esterne
     private User user;

@@ -32,7 +32,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       },
     });
 
-    return throwError(()=>new Error('Token Scaduto'));
+    return throwError(()=>new Error('Token Scaduto')    );
   }
 
   const authRequest = req.clone({

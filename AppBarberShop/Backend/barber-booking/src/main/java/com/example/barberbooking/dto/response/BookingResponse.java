@@ -15,4 +15,6 @@ public class BookingResponse {
     private String username;
     private Long barberServiceId;
     private String serviceName;
+    private Long barberId;
+    private String barberName;
 }

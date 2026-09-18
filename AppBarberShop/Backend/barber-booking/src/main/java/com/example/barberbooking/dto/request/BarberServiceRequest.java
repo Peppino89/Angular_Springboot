@@ -17,10 +17,6 @@ public class BarberServiceRequest {
     @Positive
     private Double price;
 
-    @NotNull
-    @Positive
-    private Integer durationMinutes;
-
     private boolean active = true;
 
 

@@ -15,4 +15,8 @@ public class BookingRequest {
     @NotNull(message = "Servizio obbligatorio")
     private Long barberServiceId;
 
+    @NotNull(message = "Selezionare il barbiere")
+    @Positive(message = "Barbiere non valido")
+    private Long barberId;
+
 }

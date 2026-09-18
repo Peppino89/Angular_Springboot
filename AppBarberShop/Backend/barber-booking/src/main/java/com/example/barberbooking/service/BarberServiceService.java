@@ -45,7 +45,6 @@ public class BarberServiceService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
-                .durationMinutes(request.getDurationMinutes())
                 .active(request.isActive())
                 .build();
 
@@ -62,7 +61,7 @@ public class BarberServiceService {
         existingBarberService.setName(request.getName());
         existingBarberService.setDescription(request.getDescription());
         existingBarberService.setPrice(request.getPrice());
-        existingBarberService.setDurationMinutes(request.getDurationMinutes());
+
         existingBarberService.setActive(request.isActive());
 
         log.info("Aggiornamento servizio con id {}", id);
@@ -107,7 +106,6 @@ public class BarberServiceService {
         barberServiceResponse.setDescription(barberService.getDescription());
         barberServiceResponse.setImageUrl(barberService.getImageUrl());
         barberServiceResponse.setPrice(barberService.getPrice());
-        barberServiceResponse.setDurationMinutes(barberService.getDurationMinutes());
         barberServiceResponse.setActive(barberService.isActive());
 
         return barberServiceResponse;

@@ -23,6 +23,12 @@ public class GlobalExceptionHandler {
                     .body(new ErrorResponse("404", e.getMessage()));
     }
 
+    @ExceptionHandler(BarberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBarberNotFoundException(BarberNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("404", e.getMessage()));
+    }
+
     @ExceptionHandler(BookingNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleBookingNotFoundException(BookingNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

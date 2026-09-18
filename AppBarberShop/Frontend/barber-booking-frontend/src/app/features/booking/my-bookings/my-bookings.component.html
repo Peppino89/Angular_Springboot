@@ -6,15 +6,20 @@
       <div class="bookings-header__content">
         <div>
           <h1>Le mie prenotazioni</h1>
-          <p>
-            Qui puoi controllare gli appuntamenti che hai prenotato e gestire le tue richieste.
-          </p>
+          <p>Qui puoi controllare gli appuntamenti che hai prenotato e gestire le tue richieste.</p>
         </div>
 
-        <button class="btn btn-outline" type="button" (click)="loadMyBookings()">
-          <i class="bx bx-refresh"></i>
-          <span>Aggiorna</span>
-        </button>
+        <div class="booking-header__actions">
+          <button class="btn btn-outline" type="button" (click)="loadMyBookings()">
+            <i class="bx bx-refresh"></i>
+            <span>Aggiorna</span>
+          </button>
+
+          <button class="btn btn-primary" type="button" (click)="openCreateModal()">
+            <i class="bx bx-calendar-plus"></i>
+            <span>Nuova prenotazione</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -40,8 +45,8 @@
         <i class="bx bx-calendar-x"></i>
         <h2>Nessuna prenotazione trovata</h2>
         <p>
-          Non hai ancora prenotato nessun servizio.
-          Scegli un trattamento e prenota il tuo appuntamento.
+          Non hai ancora prenotato nessun servizio. Scegli un trattamento e prenota il tuo
+          appuntamento.
         </p>
 
         <a routerLink="/services" class="btn btn-primary">
@@ -58,7 +63,10 @@
                 <i class="bx bx-calendar-check"></i>
               </div>
 
-              <span class="booking-card__status" [class]="'booking-card__status ' + getStatusClass(booking.status)">
+              <span
+                class="booking-card__status"
+                [class]="'booking-card__status ' + getStatusClass(booking.status)"
+              >
                 {{ getStatusLabel(booking.status) }}
               </span>
             </div>
@@ -94,6 +102,121 @@
     }
   </div>
 
+  @if (createModalOpen()) {
+    <div class="booking-modal-backdrop" (click)="closeCreateModal()">
+      <div class="booking-modal booking-modal--create" (click)="$event.stopPropagation()">
+        <div class="booking-modal__icon booking-modal__icon--create">
+          <i class="bx bx-calendar-plus"></i>
+        </div>
+
+        <h2>Nuova prenotazione</h2>
+        <p>Scegli il servizio, la data e l'orario in cui vuoi prenotare il tuo appuntamento.</p>
+
+        @if (creatingBookingErrorMessage()) {
+          <div class="booking-modal__error">
+            <i class="bx bx-error-circle"></i>
+            <span>{{ creatingBookingErrorMessage() }}</span>
+          </div>
+        }
+
+        <form class="booking-create-form" [formGroup]="bookingForm" (ngSubmit)="createBooking()">
+          <div class="form-field">
+            <label for="barberServiceId">Servizio</label>
+            <div class="form-control form-control--select">
+              <i class="bx bx-cut"></i>
+              <select id="barberServiceId" formControlName="barberServiceId">
+                <option [ngValue]="0">Seleziona un servizio</option>
+                @for (service of services(); track service.id) {
+                  <option [ngValue]="service.id">
+                    {{ service.name }} - €{{ service.price }} - {{ service.durationMinutes }} min
+                  </option>
+                }
+              </select>
+            </div>
+            @if(barberServiceId().touched && barberServiceId().hasError('min')){
+              <small> Seleziona un servizio.</small>
+            }
+          </div>
+
+          @if(loadingServices()){
+            <div class="booking-create-loading">
+               <i class="bx bx-loader-alt bx-spin"></i>
+              <span>Caricamento servizi...</span>
+            </div>
+          }
+          @if(selectedService(); as service){
+            <div class="selected-service-box">
+              <span>Servizio Selezionato</span>
+              <strong>{{ service.name }}</strong>
+              <small>
+                Durata {{ service.durationMinutes }} minuti . €{{ service.price}}
+              </small>
+            </div>
+          }
+
+          <div class="booking-create-form__row">
+             <div class="form-field">
+               <label for="appointmentDate">Data</label>
+               <div class="form-control">
+                 <i class="bx bx-calendar"></i>
+                 <input
+                   id="appointmentDate"
+                   type="date"
+                   formControlName="appointmentDate"
+                 >
+               </div>
+
+               @if(appointmentDate().touched && appointmentDate().hasError('required')){
+                 <small>La data è obbligatoria</small>
+               }
+             </div>
+
+            <div class="form-field">
+              <label for="appointmentTime">Ora</label>
+              <div class="form-control">
+               <i class="bx bxs-time-five"></i>
+                <input
+                id="appointmentTime"
+                type="time"
+                formControlName="appointmentTime"
+                >
+              </div>
+              @if(appointmentTime().touched && appointmentTime().hasError('required')){
+                <small>L'orario è obbligatorio.</small>
+              }
+            </div>
+          </div>
+
+          <div class="booking-modal__actions">
+            <button
+              class="btn btn-outline"
+              type="button"
+              (click)="closeCreateModal()"
+              [disabled]="creatingBooking()"
+            >
+              <i class="bx bx-x"></i>
+              <span>Annulla</span>
+            </button>
+
+            <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="creatingBooking()"
+            >
+              @if(creatingBooking()){
+                <i class="bx bx-loader-alt bx-spin"></i>
+                <span>Prenotazione...</span>
+              }@else{
+                <i class="bx bx-calendar-check"></i>
+                <span>Conferma prenotazione</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
   @if (bookingToDelete()) {
     <div class="booking-modal-backdrop" (click)="closeDeleteModal()">
       <div class="booking-modal" (click)="$event.stopPropagation()">
@@ -107,7 +230,8 @@
           Stai per eliminare la prenotazione per
           <strong>{{ bookingToDelete()?.serviceName }}</strong>
           del
-          <strong>{{ formatDateTime(bookingToDelete()!.appointmentDateTime) }}</strong>.
+          <strong>{{ formatDateTime(bookingToDelete()!.appointmentDateTime) }}</strong
+          >.
         </p>
 
         @if (deleteErrorMessage()) {

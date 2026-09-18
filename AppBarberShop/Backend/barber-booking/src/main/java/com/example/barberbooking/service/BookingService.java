@@ -3,11 +3,13 @@ package com.example.barberbooking.service;
 import com.example.barberbooking.dto.request.*;
 import com.example.barberbooking.dto.response.BookingResponse;
 import com.example.barberbooking.dto.response.PageResponse;
+import com.example.barberbooking.entity.Barber;
 import com.example.barberbooking.entity.BarberService;
 import com.example.barberbooking.entity.Booking;
 import com.example.barberbooking.entity.User;
 import com.example.barberbooking.enums.BookingStatus;
 import com.example.barberbooking.exception.*;
+import com.example.barberbooking.repository.BarberRepository;
 import com.example.barberbooking.repository.BarberServiceRepository;
 import com.example.barberbooking.repository.BookingRepository;
 import com.example.barberbooking.repository.UserRepository;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,12 +28,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final BarberServiceRepository barberServiceRepository;
     private final UserRepository userRepository;
+    private final BarberRepository barberRepository;
 
+    @Transactional
     public BookingResponse createBooking(BookingRequest request, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
@@ -37,6 +44,8 @@ public class BookingService {
         BarberService barberService = barberServiceRepository.findById(request.getBarberServiceId())
                 .orElseThrow(()->new BarberServiceNotFoundException("Servizio non trovato"));
 
+        Barber barber = barberRepository.findById(request.getBarberId())
+                .orElseThrow(()->new BarberNotFoundException("Barber non trovato"));
 
         boolean alreadyExists = bookingRepository.existsByAppointmentDateTimeAndBarberServiceId(request.getAppointmentDateTime(),
                 request.getBarberServiceId());
@@ -52,6 +61,7 @@ public class BookingService {
                 .status(BookingStatus.IN_ATTESA)
                 .user(user)
                 .barberService(barberService)
+                .barber(barber)
                 .build();
 
         return toResponse(bookingRepository.save(booking));
@@ -83,6 +93,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     // L'ADMIN può modificare qualsiasi prenotazione; un USER solo la propria.
     @PreAuthorize(
             "hasRole('ADMIN') or @bookingAuthorization.isOwner(#id, authentication.name)"
@@ -96,6 +107,7 @@ public class BookingService {
         return toResponse(bookingRepository.save(booking));
     }
 
+    @Transactional
     // L'ADMIN può eliminare qualsiasi prenotazione; un USER solo la propria.
     @PreAuthorize(
             "hasRole('ADMIN') or @bookingAuthorization.isOwner(#id, authentication.name)"
@@ -167,6 +179,9 @@ public class BookingService {
 
         bookingResponse.setBarberServiceId(booking.getBarberService().getId());
         bookingResponse.setServiceName(booking.getBarberService().getName());
+
+        bookingResponse.setBarberId(booking.getBarber().getId());
+        bookingResponse.setBarberName(booking.getBarber().getName());
 
         return bookingResponse;
     }
