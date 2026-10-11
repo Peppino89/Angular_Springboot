@@ -1,17 +1,22 @@
 package com.example.barberbooking.service;
 
 import com.example.barberbooking.dto.request.BarberRequest;
+import com.example.barberbooking.dto.response.AvailabilityResponse;
 import com.example.barberbooking.dto.response.BarberResponse;
 import com.example.barberbooking.entity.Barber;
 import com.example.barberbooking.exception.BarberNotFoundException;
 import com.example.barberbooking.repository.BarberRepository;
+import com.example.barberbooking.repository.BookingRepository;
 import com.example.barberbooking.storage.FileStorageService;
+import com.example.barberbooking.validation.BookingRules;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -21,7 +26,7 @@ public class BarberService {
 
     private final BarberRepository barberRepository;
     private final FileStorageService fileStorageService;
-
+    private final BookingRepository bookingRepository;
 
      public List<BarberResponse> getActiveBarbers(){
          return barberRepository.findByActiveTrueOrderByNameAsc()
@@ -80,6 +85,30 @@ public class BarberService {
 
          return toResponse(barberRepository.save(barber));
 
+     }
+
+
+     public AvailabilityResponse getAvailability(Long barberId, LocalDate date){
+
+         Barber barber = findBarberById(barberId);
+         boolean workingDay = BookingRules.isWorkingDay(date);
+
+         if(!workingDay || !barber.isActive() || barber.isOnVacation()){
+             AvailabilityResponse response = new AvailabilityResponse();
+
+             response.setBarberId(barberId);
+             response.setDate(date);
+             response.setWorkingDay(workingDay);
+             response.setComplete(false);
+             response.setAvailableSlots(List.of());
+
+             return response;
+         }
+
+         LocalDateTime start = date.atStartOfDay();
+         LocalDateTime end = date.plusDays(1).atStartOfDay();
+
+         
      }
 
 

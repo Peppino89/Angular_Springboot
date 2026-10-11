@@ -14,6 +14,7 @@ import com.example.barberbooking.repository.BarberServiceRepository;
 import com.example.barberbooking.repository.BookingRepository;
 import com.example.barberbooking.repository.UserRepository;
 import com.example.barberbooking.specification.BookingSpecification;
+import com.example.barberbooking.validation.BookingRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,21 +39,43 @@ public class BookingService {
 
     @Transactional
     public BookingResponse createBooking(BookingRequest request, String username) {
+
+        BookingRules.validate(request.getAppointmentDateTime());
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         BarberService barberService = barberServiceRepository.findById(request.getBarberServiceId())
                 .orElseThrow(()->new BarberServiceNotFoundException("Servizio non trovato"));
 
-        Barber barber = barberRepository.findById(request.getBarberId())
-                .orElseThrow(()->new BarberNotFoundException("Barber non trovato"));
+        if(!barberService.isActive()){
+            throw new InvalidBookingSlotException("Il barbiere selezionato non è disponibie");
+        }
 
-        boolean alreadyExists = bookingRepository.existsByAppointmentDateTimeAndBarberServiceId(request.getAppointmentDateTime(),
-                request.getBarberServiceId());
+
+
+        Barber barber = barberRepository.findById(request.getBarberId())
+                .orElseThrow(()->new BarberNotFoundException("Barbiere non trovato"));
+
+        if(!barber.isActive()){
+            throw new InvalidBookingSlotException("Il barbiere selezionato non è dispobibile");
+        }
+
+        if(barber.isOnVacation()){
+            throw new InvalidBookingSlotException("Il barbiere selezionato è in ferie");
+        }
+        boolean alreadyExists = bookingRepository.existsByAppointmentDateTimeAndBarberIdAndStatusIn(
+                request.getAppointmentDateTime(),
+                request.getBarberId(),
+                List.of(
+                        BookingStatus.IN_ATTESA,
+                        BookingStatus.CONFERMATA
+                )
+        );
 
         if(alreadyExists){
             throw new BookingAlreadyExistsException(
-                    "Esiste già una prenotazione per questo servizio nella data e ora selezionata"
+                  "Il Barbiere è già occupato nella data e ora selezionata"
             );
         }
 

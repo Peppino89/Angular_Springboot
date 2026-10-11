@@ -145,5 +145,12 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(InvalidBookingSlotException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidBookingSlotException(InvalidBookingSlotException e){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("400",e.getMessage()));
+    }
+
 
 }
