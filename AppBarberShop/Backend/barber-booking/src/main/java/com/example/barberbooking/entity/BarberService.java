@@ -26,6 +26,7 @@ public class BarberService {
     private String imageUrl;
 
     @Positive
+    @Column(nullable = false)
     private Double price;
 
 

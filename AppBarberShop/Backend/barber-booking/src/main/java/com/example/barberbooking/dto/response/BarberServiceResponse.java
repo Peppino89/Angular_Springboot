@@ -9,6 +9,5 @@ public class BarberServiceResponse {
     private String description;
     private String imageUrl;
     private Double price;
-    private Integer durationMinutes;
     private boolean active;
 }

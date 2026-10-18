@@ -4,6 +4,8 @@ import com.example.barberbooking.dto.request.BarberRequest;
 import com.example.barberbooking.dto.response.AvailabilityResponse;
 import com.example.barberbooking.dto.response.BarberResponse;
 import com.example.barberbooking.entity.Barber;
+import com.example.barberbooking.entity.Booking;
+import com.example.barberbooking.enums.BookingStatus;
 import com.example.barberbooking.exception.BarberNotFoundException;
 import com.example.barberbooking.repository.BarberRepository;
 import com.example.barberbooking.repository.BookingRepository;
@@ -17,7 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -96,10 +101,11 @@ public class BarberService {
          if(!workingDay || !barber.isActive() || barber.isOnVacation()){
              AvailabilityResponse response = new AvailabilityResponse();
 
-             response.setBarberId(barberId);
+             response.setBarberId(barber.getId());
              response.setDate(date);
              response.setWorkingDay(workingDay);
              response.setComplete(false);
+             response.setOnVacation(barber.isOnVacation());
              response.setAvailableSlots(List.of());
 
              return response;
@@ -108,7 +114,37 @@ public class BarberService {
          LocalDateTime start = date.atStartOfDay();
          LocalDateTime end = date.plusDays(1).atStartOfDay();
 
-         
+         List<Booking> bookings = bookingRepository
+                 .findByBarberIdAndAppointmentDateTimeBetweenAndStatusIn(
+                   barberId,
+                   start,
+                   end,
+                   List.of(
+                           BookingStatus.IN_ATTESA,
+                           BookingStatus.CONFERMATA
+                   )
+                 );
+
+         Set<LocalTime> occupiedSlots = bookings.stream()
+                 .map(booking -> booking.getAppointmentDateTime().toLocalTime())
+                 .collect(Collectors.toSet());
+
+         List<LocalTime> availableSlots = BookingRules.generateDailySlots()
+                                                      .stream()
+                                                      .filter(slot->!occupiedSlots.contains(slot))
+                                                      .toList();
+
+         AvailabilityResponse response = new AvailabilityResponse();
+         response.setBarberId(barber.getId());
+         response.setDate(date);
+         response.setWorkingDay(true);
+         response.setOnVacation(false);
+         response.setComplete(availableSlots.isEmpty());
+         response.setAvailableSlots(availableSlots);
+
+         return response;
+
+
      }
 
 

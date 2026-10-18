@@ -1,14 +1,17 @@
 package com.example.barberbooking.controller;
 
 import com.example.barberbooking.dto.request.BarberRequest;
+import com.example.barberbooking.dto.response.AvailabilityResponse;
 import com.example.barberbooking.dto.response.BarberResponse;
 import com.example.barberbooking.service.BarberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -26,6 +29,17 @@ public class BarberController {
     @GetMapping("/{barberId}")
     public ResponseEntity<BarberResponse>getBarberById(@PathVariable("barberId") Long barberId){
         return ResponseEntity.ok(barberService.getBarberById(barberId));
+    }
+
+    @GetMapping("/{barberId}/availability")
+    public ResponseEntity<AvailabilityResponse> getAvailability(
+           @PathVariable Long barberId,
+
+           @RequestParam
+           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+           LocalDate date
+    ){
+        return ResponseEntity.ok(barberService.getAvailability(barberId, date));
     }
 
     @PostMapping
