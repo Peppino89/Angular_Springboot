@@ -34,10 +34,10 @@ public class BarberService {
     private final BookingRepository bookingRepository;
 
      public List<BarberResponse> getActiveBarbers(){
-         return barberRepository.findByActiveTrueOrderByNameAsc()
+         return barberRepository.findByActiveTrueOrderByIdAsc()
                  .stream()
                  .map(this::toResponse)
-                 .toList();
+                 .collect(Collectors.toList());
      }
 
 

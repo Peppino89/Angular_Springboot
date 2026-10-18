@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BarberRepository extends JpaRepository<Barber, Long> {
     List<Barber> findByActiveTrueOrderByNameAsc();
+    List<Barber> findByActiveTrueOrderByIdAsc();
 }
