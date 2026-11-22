@@ -129,17 +129,38 @@ public class BarberService {
                  .map(booking -> booking.getAppointmentDateTime().toLocalTime())
                  .collect(Collectors.toSet());
 
-         List<LocalTime> availableSlots = BookingRules.generateDailySlots()
-                                                      .stream()
-                                                      .filter(slot->!occupiedSlots.contains(slot))
-                                                      .toList();
+         List<LocalTime>dailySlots = BookingRules.generateDailySlots();
+
+         List<LocalTime>freeSlots = dailySlots.stream()
+                 .filter(slot->!occupiedSlots.contains(slot))
+                 .toList();
+
+
+       boolean complete = freeSlots.isEmpty();
+
+        LocalDate today = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+
+
+        List<LocalTime> availableSlots = freeSlots.stream()
+                                                  .filter(slot->
+                                                          date.isAfter(today)||
+                                                                  (
+                                                                          date.isEqual(today) && slot.isAfter(currentTime)
+                                                                          )
+
+
+                                                  )
+                                                 .toList();
+
+
 
          AvailabilityResponse response = new AvailabilityResponse();
          response.setBarberId(barber.getId());
          response.setDate(date);
          response.setWorkingDay(true);
          response.setOnVacation(false);
-         response.setComplete(availableSlots.isEmpty());
+         response.setComplete(complete);
          response.setAvailableSlots(availableSlots);
 
          return response;
