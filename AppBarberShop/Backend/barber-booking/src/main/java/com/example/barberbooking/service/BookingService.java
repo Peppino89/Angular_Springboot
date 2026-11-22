@@ -42,6 +42,17 @@ public class BookingService {
 
         BookingRules.validate(request.getAppointmentDateTime());
 
+        Barber barber = barberRepository.findByIdForUpdate(request.getBarberId())
+                .orElseThrow(()->new BarberNotFoundException("Barbiere non trovato"));
+
+        if(!barber.isActive()){
+            throw new InvalidBookingSlotException("Il barbiere selezionato non è disponibile");
+        }
+
+        if(barber.isOnVacation()){
+            throw new InvalidBookingSlotException("Il barbiere selezionato è in ferie");
+        }
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
@@ -49,21 +60,9 @@ public class BookingService {
                 .orElseThrow(()->new BarberServiceNotFoundException("Servizio non trovato"));
 
         if(!barberService.isActive()){
-            throw new InvalidBookingSlotException("Il barbiere selezionato non è disponibie");
+            throw new InvalidBookingSlotException("Il servizio selezionato non è disponibile");
         }
 
-
-
-        Barber barber = barberRepository.findById(request.getBarberId())
-                .orElseThrow(()->new BarberNotFoundException("Barbiere non trovato"));
-
-        if(!barber.isActive()){
-            throw new InvalidBookingSlotException("Il barbiere selezionato non è dispobibile");
-        }
-
-        if(barber.isOnVacation()){
-            throw new InvalidBookingSlotException("Il barbiere selezionato è in ferie");
-        }
         boolean alreadyExists = bookingRepository.existsByAppointmentDateTimeAndBarberIdAndStatusIn(
                 request.getAppointmentDateTime(),
                 request.getBarberId(),
@@ -75,7 +74,7 @@ public class BookingService {
 
         if(alreadyExists){
             throw new BookingAlreadyExistsException(
-                  "Il Barbiere è già occupato nella data e ora selezionata"
+                    "Il barbiere è già occupato nella data e ora selezionata"
             );
         }
 
