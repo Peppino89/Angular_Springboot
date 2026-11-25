@@ -21,6 +21,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.LockModeType;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +40,8 @@ public class BookingService {
     private final BarberServiceRepository barberServiceRepository;
     private final UserRepository userRepository;
     private final BarberRepository barberRepository;
+    private final EntityManager entityManager;
+
 
     @Transactional
     public BookingResponse createBooking(BookingRequest request, String username) {
@@ -115,7 +121,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation =  Isolation.READ_COMMITTED)
     // L'ADMIN può modificare qualsiasi prenotazione; un USER solo la propria.
     @PreAuthorize(
             "hasRole('ADMIN') or @bookingAuthorization.isOwner(#id, authentication.name)"
@@ -124,8 +130,36 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException("Prenotazione non trovata"));
 
-        booking.setStatus(request.getStatus());
+        Long barberId = booking.getBarber().getId();
 
+        barberRepository.findByIdForUpdate(barberId).orElseThrow(
+                ()->new BarberNotFoundException("Barbiere non trovato")
+        );
+
+        try{
+          entityManager.refresh(booking,LockModeType.PESSIMISTIC_WRITE);
+        }catch(EntityNotFoundException e){
+          throw new BookingNotFoundException("Prenotazione non trovata");
+        }
+
+        BookingStatus newStatus = request.getStatus();
+        List<BookingStatus>occupiedStatuses = List.of(
+                BookingStatus.IN_ATTESA,
+                BookingStatus.CONFERMATA
+        );
+
+        if (occupiedStatuses.contains(newStatus)){
+            boolean slotOccupied = bookingRepository.existsByAppointmentDateTimeAndBarberIdAndStatusInAndIdNot(
+                    booking.getAppointmentDateTime(),
+                    barberId,
+                    occupiedStatuses,
+                    id
+            );
+            if (slotOccupied){
+                throw new BookingAlreadyExistsException("Il barbiere è già occupato nella data e ora selezionata");
+            }
+        }
+        booking.setStatus(newStatus);
         return toResponse(bookingRepository.save(booking));
     }
 

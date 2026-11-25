@@ -18,6 +18,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
             Long barberId,
             List<BookingStatus> statuses
     );
+    
+    boolean existsByAppointmentDateTimeAndBarberIdAndStatusInAndIdNot(
+    LocalDateTime appointmentDateTime,
+    Long barberId,
+    List<BookingStatus> statuses,
+    Long bookingId
+    );
+    
     List<Booking> findByAppointmentDateTimeBetween(LocalDateTime start, LocalDateTime end);
     Long countByStatus(BookingStatus status);
     List<Booking> findByBarberIdAndAppointmentDateTimeBetweenAndStatusIn(
@@ -27,5 +35,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
             List<BookingStatus> statuses
 
     );
-
+    
 }
